@@ -46,7 +46,18 @@ class syntax_plugin_repo extends DokuWiki_Syntax_Plugin {
  
       $match = substr($match, 7, -2);
       list($base, $title) = explode('|', $match, 2);
-      return array(trim($base), trim($title), $pos); 
+      list($base, $refresh) = explode(' ', $base, 2);
+      
+      if (preg_match('/(\d+)([dhm])/', $refresh, $match)){
+        $period = array('d' => 86400, 'h' => 3600, 'm' => 60);
+        // n * period in seconds, minimum 10 minutes
+        $refresh = max(600, $match[1] * $period[$match[2]]);
+      } else {
+        // default to 4 hours
+        $refresh = 14400;
+      }
+      
+      return array(trim($base), trim($title), $pos, $refresh);
   }     
  
   /** 
@@ -61,26 +72,32 @@ class syntax_plugin_repo extends DokuWiki_Syntax_Plugin {
     $url   = $base.$path;
 
     if ($mode == 'xhtml'){
-          
-      // prevent caching to ensure the included page is always fresh 
-      $renderer->info['cache'] = false;
-                  
+                        
       // output
       $renderer->header($title.$path, 5, $data[2]);
       $renderer->section_open(5);
       if ($url{strlen($url) - 1} == '/'){                 // directory
-        $this->_directory($base, $renderer, $path);
+        $this->_directory($base, $renderer, $path, $data[3]);
       } elseif (preg_match('/(jpe?g|gif|png)$/i', $url)){ // image
         $this->_image($url, $renderer);
       } else {                                            // source code file
-        $this->_codefile($url, $renderer);
+        $this->_codefile($url, $renderer, $data[3]);
       }
       if ($path) $this->_location($path, $title, $renderer);
       $renderer->section_close();
       
     // for metadata renderer
     } elseif ($mode == 'metadata'){
+    
+      // list the URL as an included part of the page
       $renderer->meta['relation']['haspart'][$url] = 1;
+      
+      // set the time for cache expiration
+      if (isset($renderer->meta['date']['valid']['age']))
+        $renderer->meta['date']['valid']['age'] =
+        min($renderer->meta['date']['valid']['age'], $data[3]);
+      else
+        $renderer->meta['date']['valid']['age'] = $data[3];
     }
  
     return $ok;  
@@ -89,13 +106,13 @@ class syntax_plugin_repo extends DokuWiki_Syntax_Plugin {
   /**
    * Handle remote directories
    */
-  function _directory($url, &$renderer, $path){
+  function _directory($url, &$renderer, $path, $refresh){
     global $conf;
     
     $cache = getCacheName($url.$path, '.repo');
     $mtime = @filemtime($cache); // 0 if it doesn't exist
     
-    if (($mtime != 0) && !$_REQUEST['purge'] && ($mtime > time() - $conf['cachetime'])){
+    if (($mtime != 0) && !$_REQUEST['purge'] && ($mtime > time() - $refresh)){
       $idx = io_readFile($cache, false);
       if ($conf['allowdebug']) $idx .= "\n<!-- cachefile $cache used -->\n";
     } else {
@@ -151,10 +168,10 @@ class syntax_plugin_repo extends DokuWiki_Syntax_Plugin {
   /**
    * Handle remote source code files: display as code box with link to file at the end
    */
-  function _codefile($url, &$renderer){
+  function _codefile($url, &$renderer, $refresh){
           
     // output the code box with syntax highlighting
-    $renderer->doc .= $this->_cached_geshi($url);
+    $renderer->doc .= $this->_cached_geshi($url, $refresh);
     
     // and show a link to the original file
     $renderer->p_open();
@@ -169,14 +186,14 @@ class syntax_plugin_repo extends DokuWiki_Syntax_Plugin {
    * @author Christopher Smith <chris@jalakai.co.uk>
    * @author Esther Brunner <wikidesign@gmail.com>
    */
-  function _cached_geshi($url){
+  function _cached_geshi($url, $refresh){
     global $conf;
     
     $cache = getCacheName($url, '.code');
     $mtime = @filemtime($cache); // 0 if it doesn't exist
   
     if (($mtime != 0) && !$_REQUEST['purge'] &&
-      ($mtime > time() - $conf['cachetime']) &&
+      ($mtime > time() - $refresh) &&
       ($mtime > filemtime(DOKU_INC.'inc/geshi.php'))){
   
       $hi_code = io_readFile($cache, false);

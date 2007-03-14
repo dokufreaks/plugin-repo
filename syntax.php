@@ -6,9 +6,12 @@
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html) 
  * @author     Esther Brunner <wikidesign@gmail.com>
  * @author     Christopher Smith <chris@jalakai.co.uk>
+ * @auuthor    Doug Daniels <Daniels.Douglas@gmail.com>
  */ 
  
-if(!defined('DOKU_INC')) define('DOKU_INC',realpath(dirname(__FILE__).'/../../').'/'); 
+// must be run inside DokuWiki
+if(!defined('DOKU_INC')) die();
+
 if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/'); 
 require_once(DOKU_PLUGIN.'syntax.php'); 
   
@@ -25,7 +28,7 @@ class syntax_plugin_repo extends DokuWiki_Syntax_Plugin {
     return array( 
       'author' => 'Esther Brunner', 
       'email'  => 'wikidesign@gmail.com', 
-      'date'   => '2006-11-28', 
+      'date'   => '2007-03-14', 
       'name'   => 'Repository Plugin', 
       'desc'   => 'Show files from a remote repository with GesHi syntax highlighting', 
       'url'    => 'http://www.wikidesign.ch/en/plugin/repo/start', 
@@ -72,6 +75,9 @@ class syntax_plugin_repo extends DokuWiki_Syntax_Plugin {
     $url   = $base.$path;
 
     if ($mode == 'xhtml'){
+    
+      // prevent caching to ensure the included page is always fresh
+      $renderer->info['cache'] = false;
                         
       // output
       $renderer->header($title.$path, 5, $data[2]);
@@ -88,16 +94,7 @@ class syntax_plugin_repo extends DokuWiki_Syntax_Plugin {
       
     // for metadata renderer
     } elseif ($mode == 'metadata'){
-    
-      // list the URL as an included part of the page
       $renderer->meta['relation']['haspart'][$url] = 1;
-      
-      // set the time for cache expiration
-      if (isset($renderer->meta['date']['valid']['age']))
-        $renderer->meta['date']['valid']['age'] =
-        min($renderer->meta['date']['valid']['age'], $data[3]);
-      else
-        $renderer->meta['date']['valid']['age'] = $data[3];
     }
  
     return $ok;  
@@ -253,7 +250,7 @@ class syntax_plugin_repo extends DokuWiki_Syntax_Plugin {
 }
 
 /**
- *
+ * For html_buildlist()
  */
 function repo_list_index($item){
   global $ID;

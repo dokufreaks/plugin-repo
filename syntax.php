@@ -1,7 +1,14 @@
 <?php 
 /** 
  * Repository Plugin: show files from a remote repository with GesHi syntax highlighting
- * Syntax: {{repo>url}}
+ * Syntax: {{repo>[url] [cachetime]|[title]}}
+ * [url]       - (REQUIRED) base URL of the code repository 
+ * [cachetime] - (OPTIONAL) how often the cache should be refreshed;
+ *               a number followed by one of these chars:
+ *               d for day, h for hour or m for minutes; 
+ *               the minimum accepted value is 10 minutes.
+ * [title]     - (OPTIONAL) a string to display as the base path
+ *                of the repository. 
  * 
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html) 
  * @author     Esther Brunner <wikidesign@gmail.com>

@@ -272,4 +272,4 @@ function repo_list_index($item) {
     $title = substr(strrchr('/'.$title, '/'), 1);
     return '<a href="'.wl($ID, 'repo='.$item['path']).'" class="'.$class.'">'.$title.'</a>';
 }
-//vim:ts=4:sw=4:et:enc=utf-8:
+// vim:ts=4:sw=4:et:enc=utf-8:

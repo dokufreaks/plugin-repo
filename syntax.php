@@ -1,43 +1,43 @@
-<?php 
-/** 
+<?php
+/**
  * Repository Plugin: show files from a remote repository with GesHi syntax highlighting
  * Syntax: {{repo>[url] [cachetime]|[title]}}
- * [url]       - (REQUIRED) base URL of the code repository 
+ * [url]       - (REQUIRED) base URL of the code repository
  * [cachetime] - (OPTIONAL) how often the cache should be refreshed;
  *               a number followed by one of these chars:
- *               d for day, h for hour or m for minutes; 
+ *               d for day, h for hour or m for minutes;
  *               the minimum accepted value is 10 minutes.
  * [title]     - (OPTIONAL) a string to display as the base path
- *                of the repository. 
- * 
- * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html) 
+ *                of the repository.
+ *
+ * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author     Esther Brunner <wikidesign@gmail.com>
  * @author     Christopher Smith <chris@jalakai.co.uk>
  * @auuthor    Doug Daniels <Daniels.Douglas@gmail.com>
- */ 
- 
+ */
+
 // must be run inside DokuWiki
 if(!defined('DOKU_INC')) die();
 
-if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/'); 
-require_once(DOKU_PLUGIN.'syntax.php'); 
-  
-/** 
- * All DokuWiki plugins to extend the parser/rendering mechanism 
- * need to inherit from this class 
- */ 
-class syntax_plugin_repo extends DokuWiki_Syntax_Plugin { 
-    function getType() { return 'substition'; } 
-    function getSort() { return 301; } 
-    function getPType() { return 'block'; } 
-    function connectTo($mode) {  
-        $this->Lexer->addSpecialPattern("{{repo>.+?}}", $mode, 'plugin_repo');  
-    } 
+if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
+require_once(DOKU_PLUGIN.'syntax.php');
 
-    /** 
-     * Handle the match 
-     */ 
-    function handle($match, $state, $pos, &$handler) { 
+/**
+ * All DokuWiki plugins to extend the parser/rendering mechanism
+ * need to inherit from this class
+ */
+class syntax_plugin_repo extends DokuWiki_Syntax_Plugin {
+    function getType() { return 'substition'; }
+    function getSort() { return 301; }
+    function getPType() { return 'block'; }
+    function connectTo($mode) {
+        $this->Lexer->addSpecialPattern("{{repo>.+?}}", $mode, 'plugin_repo');
+    }
+
+    /**
+     * Handle the match
+     */
+    function handle($match, $state, $pos, &$handler) {
 
         $match = substr($match, 7, -2);
         list($base, $title) = explode('|', $match, 2);
@@ -53,11 +53,11 @@ class syntax_plugin_repo extends DokuWiki_Syntax_Plugin {
         }
 
         return array(trim($base), trim($title), $pos, $refresh);
-    }     
+    }
 
-    /** 
-     * Create output 
-     */ 
+    /**
+     * Create output
+     */
     function render($mode, &$renderer, $data) {
 
         // construct requested URL
@@ -89,7 +89,7 @@ class syntax_plugin_repo extends DokuWiki_Syntax_Plugin {
             $renderer->meta['relation']['haspart'][$url] = 1;
         }
 
-        return $ok;  
+        return $ok;
     }
 
     /**
@@ -142,7 +142,7 @@ class syntax_plugin_repo extends DokuWiki_Syntax_Plugin {
                 $items = array_merge($items, $this->_index($url, $path, $base.$result, $lvl));
             }
         }
-        return $items; 
+        return $items;
     }
 
     /**

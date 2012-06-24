@@ -1,0 +1,7 @@
+base   repo
+author Esther Brunner
+email  wikidesign@gmail.com
+date   2007-03-14
+name   Repository Plugin
+desc   Show files from a remote repository with GesHi syntax highlighting
+url    http://www.wikidesign.ch/en/plugin/repo/start

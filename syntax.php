@@ -27,21 +27,6 @@ require_once(DOKU_PLUGIN.'syntax.php');
  * need to inherit from this class 
  */ 
 class syntax_plugin_repo extends DokuWiki_Syntax_Plugin { 
- 
-    /** 
-     * return some info 
-     */ 
-    function getInfo() { 
-        return array( 
-                'author' => 'Esther Brunner', 
-                'email'  => 'wikidesign@gmail.com', 
-                'date'   => '2007-03-14', 
-                'name'   => 'Repository Plugin', 
-                'desc'   => 'Show files from a remote repository with GesHi syntax highlighting', 
-                'url'    => 'http://www.wikidesign.ch/en/plugin/repo/start', 
-                ); 
-    } 
-
     function getType() { return 'substition'; } 
     function getSort() { return 301; } 
     function getPType() { return 'block'; } 

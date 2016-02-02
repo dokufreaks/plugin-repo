@@ -37,7 +37,7 @@ class syntax_plugin_repo extends DokuWiki_Syntax_Plugin {
     /**
      * Handle the match
      */
-    function handle($match, $state, $pos, &$handler) {
+    function handle($match, $state, $pos, Doku_Handler $handler) {
 
         $match = substr($match, 7, -2);
         list($base, $title) = explode('|', $match, 2);
@@ -58,7 +58,7 @@ class syntax_plugin_repo extends DokuWiki_Syntax_Plugin {
     /**
      * Create output
      */
-    function render($mode, &$renderer, $data) {
+    function render($mode, Doku_Renderer $renderer, $data) {
 
         // construct requested URL
         $base  = hsc($data[0]);

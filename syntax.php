@@ -13,7 +13,8 @@
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author     Esther Brunner <wikidesign@gmail.com>
  * @author     Christopher Smith <chris@jalakai.co.uk>
- * @auuthor    Doug Daniels <Daniels.Douglas@gmail.com>
+ * @author     Doug Daniels <Daniels.Douglas@gmail.com>
+ * @author     Myron Turner <turnermm02@shaw.ca>
  */
 
 // must be run inside DokuWiki
@@ -183,13 +184,13 @@ class syntax_plugin_repo extends DokuWiki_Syntax_Plugin {
 
         if (($mtime != 0) && !$_REQUEST['purge'] &&
                 ($mtime > time() - $refresh) &&
-                ($mtime > filemtime(DOKU_INC.'inc/geshi.php'))) {
+                ($mtime > filemtime(DOKU_INC.'vendor/geshi/geshi/src/geshi.php'))) {
 
             $hi_code = io_readFile($cache, false);
             if ($conf['allowdebug']) $hi_code .= "\n<!-- cachefile $cache used -->\n";
 
         } else {
-            require_once(DOKU_INC . 'inc/geshi.php');
+            require_once(DOKU_INC .'vendor/geshi/geshi/src/geshi.php');
 
             // get the source code language first
             $search = array('/^htm/', '/^js$/');
@@ -201,7 +202,7 @@ class syntax_plugin_repo extends DokuWiki_Syntax_Plugin {
             $http->timeout = 25; //max. 25 sec
             $code = $http->get($url);
 
-            $geshi = new GeSHi($code, strtolower($lang), DOKU_INC.'inc/geshi');
+            $geshi = new GeSHi($code, strtolower($lang), DOKU_INC .'vendor/geshi/geshi/src/geshi');
             $geshi->set_encoding('utf-8');
             $geshi->enable_classes();
             $geshi->set_header_type(GESHI_HEADER_PRE);

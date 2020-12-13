@@ -1,7 +1,7 @@
 base   repo
 author Esther Brunner
 email  wikidesign@gmail.com
-date   2020-05-29
+date   2020-12-13
 name   Repository Plugin
 desc   Show files from a remote repository with GesHi syntax highlighting
 url    http://www.dokuwiki.org/plugin:repo

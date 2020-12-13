@@ -75,7 +75,7 @@ class syntax_plugin_repo extends DokuWiki_Syntax_Plugin {
             // output
             $renderer->header($title.$path, 5, $data[2]);
             $renderer->section_open(5);
-            if ($url{strlen($url) - 1} == '/') {                 // directory
+            if ($url[strlen($url) - 1] == '/') {                 // directory
                 $this->_directory($base, $renderer, $path, $data[3]);
             } elseif (preg_match('/(jpe?g|gif|png)$/i', $url)) { // image
                 $this->_image($url, $renderer);
@@ -131,7 +131,7 @@ class syntax_plugin_repo extends DokuWiki_Syntax_Plugin {
         foreach ($results[1] as $result) {
             if ($result == '../') continue;
 
-            $type = ($result{strlen($result) - 1} == '/' ? 'd' : 'f');
+            $type = ($result[strlen($result) - 1] == '/' ? 'd' : 'f');
             $open = (($type == 'd') && (strpos($path, $base.$result) === 0));
             $items[] = array(
                     'level' => $lvl,
